@@ -1,0 +1,22 @@
+---
+
+- name: MySQL | Set debconf vars
+  action: raw sudo echo mysql-server mysql-server/root_password password $mysql_root_password | sudo /usr/bin/debconf-set-selections
+  tags: mysql
+
+- name: MySQL | Set debconf vars
+  action: raw sudo echo mysql-server mysql-server/root_password_again password $mysql_root_password | sudo /usr/bin/debconf-set-selections
+  tags: mysql
+
+- name: Install MySQL server
+  apt: name=mysql-server state=latest
+
+- name: Install Apache module for MySQL authentication
+  apt: name=libapache2-mod-auth-mysql state=latest
+
+- name: Install MySQL module for PHP
+  apt: name=php5-mysql state=latest
+
+- name: Install Python MySQLdb
+  apt: name=python-mysqldb state=latest
+

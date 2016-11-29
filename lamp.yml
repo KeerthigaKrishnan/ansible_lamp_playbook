@@ -1,0 +1,10 @@
+---
+
+- name: Deploy LAMP
+  hosts: lamp-hosts
+  sudo: yes
+
+  roles:
+    - system_update
+    - webserver
+    - mysql

@@ -1,0 +1,24 @@
+- name: Create replication slave user on master  
+  sudo: true  
+  mysql_user: name=repl host='%' password={{ MYSQL_REPL_PASS }} priv=*.*:"REPLICATION SLAVE" state=present login_user=debian-sys-maint login_password={{ MYSQL_ROOT_PASS }}  
+  when: mysql_repl_role == 'master'
+ 
+- name: Check if slave is already configured for replication  
+  mysql_replication: mode=getslave login_user=debian-sys-maint login_password={{ MYSQL_ROOT_PASS }}  
+  ignore_errors: true  
+  register: slave  
+  when: mysql_repl_role == 'slave'
+ 
+- name: Get the master replication status  
+  mysql_replication: mode=getmaster login_user=debian-sys-maint login_password={{ MYSQL_ROOT_PASS }}  
+  delegate_to: mysql01.local  
+  register: repl_stat  
+  when: slave|failed and mysql_repl_role == 'slave'
+ 
+- name: Change the master in slave to start the replication  
+  mysql_replication: mode=changemaster master_host=mysql01.local master_log_file={{ repl_stat.File }} master_log_pos={{ repl_stat.Position }} master_user=repl master_password={{ MYSQL_REPL_PASS }} login_user=debian-sys-maint login_password={{ MYSQL_ROOT_PASS }}  
+  when: slave|failed and mysql_repl_role == 'slave'
+ 
+- name: Activate slave to start the replication  
+  mysql_replication: mode=startslave login_user=debian-sys-maint login_password={{ MYSQL_ROOT_PASS }}  
+  when: mysql_repl_role == 'slave'

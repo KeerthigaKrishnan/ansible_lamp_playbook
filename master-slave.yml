@@ -1,0 +1,8 @@
+---
+
+- name: Deploy LAMP
+  hosts: mysql-master:mysql-slave
+  sudo: yes
+  
+  roles:
+    - master-slave

@@ -1,0 +1,8 @@
+[lamp-hosts]
+127.0.0.1 ansible_ssh_pass=vagrant ansible_ssh_user=vagrant
+
+[mysql-master]
+127.0.0.1 ansible_ssh_host=localhost
+
+[mysql-slave]
+localhost ansible_ssh_host=localhost_test
